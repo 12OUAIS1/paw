@@ -7,13 +7,14 @@ router.post("/addtask", async(req,res)=>{
     try {
         const {title,descreption,week,date,time,mrdetails,email}= req.body;
     const existuser = await User.findOne({email});
-    if(existuser){
-        const list = new List({title,descreption,week,date,time,mrdetails,user: existuser});
-        await list.save().then(() =>res.status(200).json({list}));
-        existuser.list.push();//list array mongo push the data into the array list
-        existuser.save();
-    }
-    } catch (error) {
+   if (existuser) {
+  const newList = new List({ title, descreption, week, date, time, mrdetails, user: existuser._id });
+  await newList.save();
+  existuser.list.push(newList._id); // Use newList._id instead of list._id
+  await existuser.save();
+  res.status(200).json({ list: newList });
+}
+} catch (error) {
         console.log(error);
     }
 });
